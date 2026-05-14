@@ -4,7 +4,11 @@
 
 ## 项目类型
 
-书籍创作项目（非软件项目）
+书籍创作 + 静态网站项目
+
+## 在线预览
+
+[🌐 墨积成长 | InkGrowth](https://r2fdm6ncsm-prog.github.io/InkGrowth-Notes/prototype/index.html)
 
 ## 项目定位
 
