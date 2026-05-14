@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>墨积成长 | InkGrowth</title>
+<style>
+  :root {
+    --bg: #faf6f0;
+    --surface: #fffcf7;
+    --card: #ffffff;
+    --text: #3a2e20;
+    --text-secondary: #6a5b4c;
+    --text-muted: #908070;
+    --accent: #c17f4b;
+    --accent-light: #f0e0cc;
+    --accent-hover: #a86838;
+    --border: #e8ddd0;
+    --border-light: #f0e8dd;
+    --shadow: 0 2px 12px rgba(58,46,32,0.06);
+    --shadow-hover: 0 8px 30px rgba(58,46,32,0.10);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --font-sans: "PingFang SC", "Microsoft YaHei", "Heiti SC", sans-serif;
+    --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+    --header-bg: rgba(250,246,240,0.92);
+  }
+  .dark {
+    --bg: #1e1a16;
+    --surface: #2a2520;
+    --card: #322c26;
+    --text: #e8ddd0;
+    --text-secondary: #b8a898;
+    --text-muted: #7a6b58;
+    --accent: #d4a06a;
+    --accent-light: #5a4030;
+    --accent-hover: #e8b888;
+    --border: #3d352e;
+    --border-light: #2e2822;
+    --shadow: 0 2px 12px rgba(0,0,0,0.2);
+    --shadow-hover: 0 8px 30px rgba(0,0,0,0.3);
+    --header-bg: rgba(30,26,22,0.92);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--font-sans);
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.8;
+    font-weight:400;
+    letter-spacing:0.01em;
+    transition:background var(--transition),color var(--transition);
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent);text-decoration:none;transition:color var(--transition)}
+  a:hover{color:var(--accent-hover)}
+
+  /* ===== HEADER ===== */
+  header{
+    position:sticky;top:0;z-index:100;
+    background:var(--header-bg);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--border-light);
+    transition:background var(--transition),border-color var(--transition);
+  }
+  .header-inner{
+    max-width:1200px;margin:0 auto;
+    padding:0 24px;height:64px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .logo{
+    font-family:var(--font-serif);font-size:26px;font-weight:700;
+    color:var(--text);cursor:pointer;display:flex;align-items:center;gap:8px;
+  }
+  .logo span{color:var(--accent)}
+  .logo small{font-size:13px;font-weight:400;color:var(--text-muted);font-family:var(--font-sans)}
+  .nav{display:flex;align-items:center;gap:24px}
+  .nav a{
+    font-size:14px;color:var(--text-secondary);cursor:pointer;padding:4px 0;position:relative;
+    transition:color var(--transition);
+  }
+  .nav a::after{
+    content:'';position:absolute;bottom:-2px;left:0;
+    width:0;height:2px;background:var(--accent);
+    transition:width var(--transition);border-radius:2px;
+  }
+  .nav a:hover::after,.nav a.active::after{width:100%}
+  .nav a.active{color:var(--accent)}
+  .theme-toggle{
+    background:none;border:none;cursor:pointer;
+    width:36px;height:36px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--text-secondary);font-size:18px;
+    transition:all var(--transition);
+    background:var(--border-light);
+  }
+  .theme-toggle:hover{background:var(--border);color:var(--accent)}
+  .mobile-menu-btn{display:none;background:none;border:none;font-size:24px;color:var(--text);cursor:pointer}
+  /* ===== PAGE CONTAINER ===== */
+  .page{display:none;animation:fadeIn 0.4s ease}
+  .page.active{display:block}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+  /* ===== HOME: HERO ===== */
+  .hero{
+    background:var(--bg);padding:72px 24px 56px;text-align:center;
+    border-bottom:1px solid var(--border-light);
+  }
+  .hero h1{
+    font-family:var(--font-serif);
+    font-size:clamp(24px,3.5vw,36px);line-height:1.35;margin-bottom:10px;
+  }
+  .hero h1 span{color:var(--accent)}
+  .hero p{
+    font-size:clamp(15px,1.8vw,19px);
+    color:var(--text-secondary);max-width:560px;margin:0 auto;
+  }
+  .hero-en{
+    font-size:clamp(13px,1.4vw,16px);
+    color:var(--text-muted);margin-top:8px;font-style:italic;
+  }
+
+  /* ===== HOME MODULE COMMON ===== */
+  .module{margin:48px auto;max-width:1200px;padding:0 24px}
+  .module-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px}
+  .module-header h2{font-family:var(--font-serif);font-size:22px}
+  .module-header .more{font-size:14px;font-weight:600;color:var(--accent);display:flex;align-items:center;gap:4px;cursor:pointer}
+  .module-header .more:hover{gap:8px}
+
+  /* ===== HOME MODULE 1: BOOK (paper-card style) ===== */
+  .book-stack{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+  .paper-card{
+    background:linear-gradient(135deg, #fffcf5 0%, #fcf6ec 100%);
+    border-radius:4px 12px 12px 4px;
+    border-left:5px solid var(--accent);
+    border-top:1px solid var(--border-light);
+    border-right:1px solid var(--border-light);
+    border-bottom:1px solid var(--border-light);
+    padding:24px 24px 20px;
+    cursor:pointer;position:relative;
+    transition:all var(--transition);box-shadow:var(--shadow);
+    display:flex;flex-direction:column;
+  }
+  .dark .paper-card{
+    background:linear-gradient(135deg, #2d2822 0%, #26211c 100%);
+  }
+  .paper-card:hover{transform:translateY(-3px) translateX(2px);box-shadow:var(--shadow-hover)}
+  .paper-card .ch-number{
+    font-family:var(--font-serif);
+    font-size:32px;font-weight:700;color:var(--accent);
+    opacity:0.4;position:absolute;top:12px;right:16px;line-height:1;
+  }
+  .paper-card .bookmark{
+    display:inline-block;font-size:11px;font-weight:700;
+    letter-spacing:1px;color:var(--accent);
+    padding:3px 12px 3px 0;
+    margin-bottom:10px;
+    position:relative;
+  }
+  .paper-card .bookmark::after{
+    content:'';position:absolute;bottom:0;left:0;
+    width:100%;height:2px;background:var(--accent);border-radius:1px;
+  }
+  .paper-card h3{
+    font-family:var(--font-serif);
+    font-size:18px;line-height:1.4;margin-bottom:8px;
+    color:var(--text);
+  }
+  .paper-card p{font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:14px;flex:1}
+  .paper-card .foot{font-size:12px;color:var(--text-muted);display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px solid var(--border-light)}
+
+  /* ===== HOME MODULE 2: NOTES (tag-flow style) ===== */
+  .note-flow{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+  .tag-card{
+    background:var(--card);border-radius:var(--radius-sm);
+    border:1px solid var(--border-light);
+    padding:18px 20px;cursor:pointer;
+    transition:all var(--transition);box-shadow:var(--shadow);
+    position:relative;overflow:hidden;
+  }
+  .tag-card::before{
+    content:'';position:absolute;top:0;left:0;right:0;
+    height:3px;
+    background:linear-gradient(90deg, var(--accent), var(--accent-light));
+    opacity:0;
+    transition:opacity var(--transition);
+  }
+  .tag-card:hover::before{opacity:1}
+  .tag-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover)}
+  .tag-card .tag-strip{
+    display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;
+  }
+  .tag-card .tag-strip .t{
+    font-size:10px;font-weight:600;padding:2px 8px;
+    border-radius:3px;background:var(--accent-light);color:var(--accent);
+    letter-spacing:0.3px;
+  }
+  .tag-card .tag-strip .t.blue{background:#e0e7f0;color:#5a7a9a}
+  .dark .tag-card .tag-strip .t.blue{background:#2a3540;color:#8aafd0}
+  .tag-card .tag-strip .t.green{background:#dce8e0;color:#5a8a6a}
+  .dark .tag-card .tag-strip .t.green{background:#28352e;color:#7aaa8a}
+  .tag-card h3{font-size:15px;line-height:1.4;margin-bottom:5px}
+  .tag-card p{font-size:13px;color:var(--text-secondary);line-height:1.5;margin-bottom:10px}
+  .tag-card .foot{font-size:11px;color:var(--text-muted);display:flex;justify-content:space-between;align-items:center}
+
+  /* ===== HOME MODULE 3: INSPIRE (timeline style) ===== */
+  .timeline{position:relative;padding-left:28px}
+  .timeline::before{
+    content:'';position:absolute;left:8px;top:4px;bottom:4px;
+    width:2px;background:var(--border);
+  }
+  .growth-list{max-width:600px;margin:0}
+  .growth-item{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--border-light);cursor:pointer;transition:all var(--transition)}
+  .growth-item:hover{padding-left:8px}
+  .growth-item:first-child{border-top:1px solid var(--border-light);padding-top:16px}
+  .growth-date{font-size:13px;color:var(--accent);font-weight:600;white-space:nowrap;min-width:90px}
+  .growth-content{flex:1}
+  .growth-content h3{font-size:15px;margin-bottom:4px;font-weight:600}
+  .growth-content p{font-size:13px;color:var(--text-secondary);line-height:1.5;margin:0}
+  .tl-item{
+    position:relative;padding:0 0 20px 20px;cursor:pointer;
+    transition:all var(--transition);
+  }
+  .tl-item:last-child{padding-bottom:0}
+  .tl-item::before{
+    content:'';position:absolute;left:-24px;top:6px;
+    width:12px;height:12px;border-radius:50%;
+    border:2.5px solid var(--accent);
+    background:var(--bg);
+    transition:all var(--transition);
+  }
+  .tl-item:hover::before{background:var(--accent);transform:scale(1.2)}
+  .tl-item:hover{padding-left:26px}
+  .tl-item .tl-top{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+  .tl-item .tl-icon{font-size:16px;flex-shrink:0}
+  .tl-item .tl-status{
+    font-size:10px;font-weight:700;letter-spacing:0.5px;
+    padding:2px 10px;border-radius:10px;
+    background:var(--accent-light);color:var(--accent);
+  }
+  .tl-item .tl-status.done{background:#dce8e0;color:#5a8a6a}
+  .dark .tl-item .tl-status.done{background:#28352e;color:#7aaa8a}
+  .tl-item .tl-status.paused{background:#e8e0dc;color:#8a7a6a}
+  .tl-item h4{font-size:15px;font-weight:600}
+  .tl-item p{font-size:13px;color:var(--text-secondary);line-height:1.5;margin-top:2px}
+  .tl-item .tl-date{font-size:11px;color:var(--text-muted);margin-top:4px}
+
+  /* ===== BOOK PAGE (dual column) ===== */
+  .book-page{display:grid;grid-template-columns:280px 1fr;max-width:1200px;margin:0 auto;padding:32px 24px;gap:32px;min-height:calc(100vh - 64px)}
+  .book-header{max-width:1200px;margin:0 auto;padding:24px 24px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+  .book-selector{display:flex;align-items:center;gap:10px}
+  .book-label{font-size:14px;color:var(--text-secondary)}
+  .book-selector select{padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--card);color:var(--text);font-size:14px;font-family:var(--font-sans);cursor:pointer;transition:border-color var(--transition)}
+  .book-selector select:hover{border-color:var(--accent)}
+  .book-selector select:focus{outline:none;border-color:var(--accent)}
+  .book-meta{display:flex;gap:16px;font-size:13px;color:var(--text-muted)}
+  .book-version{color:var(--accent)}
+  .book-sidebar{
+    position:sticky;top:96px;align-self:start;
+    background:var(--surface);border-radius:var(--radius);
+    border:1px solid var(--border-light);padding:20px;
+    max-height:calc(100vh - 120px);overflow-y:auto;
+  }
+  .book-sidebar h3{font-size:15px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border-light)}
+  .tree{list-style:none}
+  .tree li{margin-bottom:2px}
+  .tree .chapter{font-weight:600;font-size:14px;padding:8px 12px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background var(--transition)}
+  .tree .chapter:hover{background:var(--accent-light)}
+  .tree .chapter.active{background:var(--accent-light);color:var(--accent)}
+  .tree .chapter .arrow{font-size:10px;transition:transform var(--transition)}
+  .tree .chapter .arrow.open{transform:rotate(90deg)}
+  .tree .sub{list-style:none;padding-left:20px;display:none}
+  .tree .sub.open{display:block}
+  .tree .sub li{font-size:13px;color:var(--text-secondary);padding:6px 12px;border-radius:4px;cursor:pointer;transition:all var(--transition)}
+  .tree .sub li:hover{color:var(--accent);background:var(--accent-light)}
+  .tree .sub li.active{color:var(--accent);font-weight:600}
+  .book-content{padding:0 8px 48px}
+  .book-content .breadcrumb{font-size:13px;color:var(--text-muted);margin-bottom:24px}
+  .book-content .breadcrumb span{color:var(--text-secondary)}
+  .book-content h1{font-family:var(--font-serif);font-size:30px;line-height:1.35;margin-bottom:8px}
+  .book-content .meta{font-size:13px;color:var(--text-muted);margin-bottom:24px}
+  .book-content .body{font-size:16px;line-height:1.9;color:var(--text)}
+  .book-content .body p{margin-bottom:18px}
+  .book-content .grow-note{
+    margin-top:32px;padding:20px 24px;
+    background:var(--accent-light);border-radius:var(--radius-sm);
+    border-left:4px solid var(--accent);
+  }
+  .book-content .grow-note strong{font-size:13px;color:var(--accent);display:block;margin-bottom:6px}
+  .book-content .grow-note p{font-size:14px;color:var(--text-secondary);margin-bottom:0}
+
+  /* ===== LIST PAGE (notes / inspiration) ===== */
+  .list-page{max-width:800px;margin:0 auto;padding:48px 24px}
+  .list-page h1{font-family:var(--font-serif);font-size:30px;margin-bottom:8px}
+  .list-page .subtitle{color:var(--text-secondary);margin-bottom:32px}
+  .list-item{
+    padding:20px 0;border-bottom:1px solid var(--border-light);
+    cursor:pointer;transition:all var(--transition);
+    display:block;width:100%;
+  }
+  .list-item:first-child{padding-top:0}
+  .list-item:hover{padding-left:12px}
+  .list-item:active{background:var(--surface)}
+  .list-item .cat-label{font-size:11px;font-weight:700;letter-spacing:1px;color:var(--accent);margin-bottom:4px}
+  .list-item h3{font-size:17px;margin-bottom:4px;transition:color var(--transition)}
+  .list-item:hover h3{color:var(--accent)}
+  .list-item p{font-size:14px;color:var(--text-secondary);line-height:1.5;margin-bottom:8px}
+  .list-item .foot{font-size:12px;color:var(--text-muted);display:flex;gap:12px;align-items:center}
+  .list-item .foot .tags{display:flex;gap:4px}
+  .list-item .foot .tags .t{font-size:11px;padding:1px 8px;border-radius:3px;background:var(--accent-light);color:var(--accent)}
+
+  /* ===== ARTICLE MODAL ===== */
+  .modal-overlay{
+    position:fixed;inset:0;z-index:200;
+    background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);
+    display:none;align-items:flex-start;justify-content:center;
+    padding:40px 24px;overflow-y:auto;
+  }
+  .modal-overlay.open{display:flex}
+  .modal{
+    background:var(--bg);border-radius:var(--radius);
+    max-width:720px;width:100%;padding:40px 36px;
+    position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.15);
+    margin:auto;border:1px solid var(--border);
+    animation:modalIn 0.3s ease;
+  }
+  @keyframes modalIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  .modal-close{
+    position:absolute;top:14px;right:14px;width:34px;height:34px;
+    border-radius:50%;border:none;background:var(--border-light);
+    color:var(--text-secondary);font-size:16px;cursor:pointer;
+    transition:all var(--transition);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .modal-close:hover{background:var(--border);color:var(--text)}
+  .modal .tag{font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--accent);margin-bottom:8px}
+  .modal h2{font-family:var(--font-serif);font-size:26px;line-height:1.35;margin-bottom:8px}
+  .modal .meta{font-size:13px;color:var(--text-muted);margin-bottom:20px}
+  .modal .body{font-size:15px;line-height:1.85;color:var(--text)}
+  .modal .body p{margin-bottom:14px}
+
+  /* ===== FOOTER ===== */
+  .site-footer{
+    border-top:1px solid var(--border-light);
+    padding:40px 24px 28px;text-align:center;
+    font-size:13px;color:var(--text-muted);
+  }
+  .site-footer .logo{margin-bottom:6px;justify-content:center;cursor:default}
+
+  /* ===== ABOUT PAGE ===== */
+  .about-page{max-width:800px;margin:0 auto;padding:56px 24px 48px}
+  .about-card{
+    background:var(--card);border-radius:var(--radius);
+    border:1px solid var(--border-light);padding:36px 32px;
+    box-shadow:var(--shadow);margin-bottom:28px;
+  }
+  .about-card:first-child{text-align:center}
+  .about-avatar{margin-bottom:20px}
+  .avatar-placeholder{
+    width:88px;height:88px;border-radius:50%;
+    background:linear-gradient(135deg, var(--accent), var(--accent-hover));
+    color:#fff;font-family:var(--font-serif);
+    font-size:36px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;
+    margin:0 auto;box-shadow:0 4px 16px rgba(193,127,75,0.3);
+  }
+  .about-card h1{font-family:var(--font-serif);font-size:28px;margin-bottom:8px}
+  .about-subtitle{color:var(--accent);font-size:15px;margin-bottom:24px;font-weight:600}
+  .about-body{text-align:left;font-size:15px;line-height:1.9;color:var(--text-secondary)}
+  .about-body p{margin-bottom:14px}
+  .about-body strong{color:var(--text)}
+  .about-card h2{font-family:var(--font-serif);font-size:20px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border-light)}
+  .comment-form{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+  .comment-input{padding:12px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--card);color:var(--text);font-size:14px;font-family:var(--font-sans);transition:border-color var(--transition)}
+  .comment-input:focus{outline:none;border-color:var(--accent)}
+  .comment-textarea{padding:12px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--card);color:var(--text);font-size:14px;font-family:var(--font-sans);resize:vertical;min-height:100px;transition:border-color var(--transition)}
+  .comment-textarea:focus{outline:none;border-color:var(--accent)}
+  .btn-send{display:inline-flex;align-items:center;justify-content:center;padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;transition:all var(--transition);align-self:flex-start}
+  .btn-send:hover{background:var(--accent-hover)}
+  .comment-list{display:flex;flex-direction:column;gap:16px;border-top:1px solid var(--border-light);padding-top:20px}
+  .comment-item{display:flex;gap:12px}
+  .comment-avatar{width:40px;height:40px;border-radius:50%;background:var(--accent-light);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;flex-shrink:0}
+  .comment-content{flex:1}
+  .comment-meta{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+  .comment-name{font-size:14px;font-weight:600;color:var(--text)}
+  .comment-time{font-size:12px;color:var(--text-muted)}
+  .comment-text{font-size:14px;color:var(--text-secondary);line-height:1.5}
+  .about-principles{list-style:none;padding:0}
+  .about-principles li{padding:12px 0;border-bottom:1px solid var(--border-light);font-size:14px;display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+  .about-principles li:last-child{border-bottom:none}
+  .about-principles li strong{color:var(--text);white-space:nowrap}
+  .about-principles li span{color:var(--text-secondary)}
+
+  /* ===== RESPONSIVE ===== */
+  @media(max-width:900px){
+    .book-page{grid-template-columns:1fr}
+    .book-sidebar{position:static;max-height:none}
+  }
+  @media(max-width:768px){
+    .nav{display:none}
+    .nav.open{display:flex;flex-direction:column;position:fixed;top:64px;left:0;right:0;background:var(--bg);padding:24px;border-bottom:1px solid var(--border);gap:16px;z-index:99}
+    .mobile-menu-btn{display:block}
+    .hero{padding:48px 24px 40px}
+    .module-header{flex-direction:column;align-items:flex-start;gap:8px}
+    .book-stack,.note-flow{grid-template-columns:1fr}
+    .timeline{padding-left:24px}
+  }
+  @media(max-width:480px){
+    .header-inner{padding:0 16px}
+    .list-page{padding:32px 16px}
+    .modal{padding:28px 20px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo" onclick="switchPage('home')">墨积<span>·</span>成长 <small>InkGrowth</small></div>
+    <nav class="nav" id="mainNav">
+      <a class="active" data-page="home">首页</a>
+      <a data-page="book">书稿</a>
+      <a data-page="notes">笔记</a>
+      <a data-page="inspire">灵感</a>
+      <a data-page="about">关于</a>
+      <button class="theme-toggle" id="themeToggle">&#9790;</button>
+    </nav>
+    <button class="mobile-menu-btn" id="mobileMenuBtn">&#9776;</button>
+  </div>
+</header>
+
+<!-- ============================ HOME ============================ -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <h1>从笔记到<span>智慧</span><br>陪你一起成长</h1>
+    <p class="hero-en">Notes today, growth tomorrow</p>
+  </div>
+
+  <!-- MODULE 1: BOOK — 纸质书签卡片 -->
+  <div class="module">
+    <div class="module-header">
+      <h2>&#128214; 精选书稿</h2>
+      <a class="more" onclick="switchPage('book')">查看更多 &rarr;</a>
+    </div>
+    <div class="book-stack">
+      <div class="paper-card" onclick="openModal('book','第一章：AI不是工具，而是你的新同事','2026-05-10 · 12 min',['很多人把AI当作更高级的搜索引擎，或者一个能聊天的工具栏。这就像把智能手机当作电话来用——没错，它能打电话，但你错过了一个时代。','AI真正带来的不是「更快的执行」，而是「思考方式的迁移」。从「我怎么做到」到「我怎么描述清楚」，这是Level 0到Level 1的跨越。','回想我第一次用GPT-4写周报。我没让它直接写，而是先给它看了我过去三个月的周报模板，告诉了它我这周做了什么，然后说：「按这个风格帮我起草」。它给了我一版，我改了20%。','那一刻我突然意识到：我不是在「使用工具」，我是在「协作」。它做初稿，我做判断和优化。我的价值从执行变成了决策。','这章要讲的核心就是：AI时代，你最重要的能力不是学会操作某个软件，而是学会「如何与AI协作」。这是一种新的工作方式，也是一种新的思维方式。'])">
+        <span class="ch-number">01</span>
+        <span class="bookmark">第一章</span>
+        <h3>AI不是工具，而是你的新同事</h3>
+        <p>很多人把AI当作更高级的搜索引擎，这就像把智能手机当电话用——没错，你能打电话，但你错过了一个时代。</p>
+        <div class="foot"><span>2026-05-10 · 12 min</span><span style="color:var(--accent);font-weight:600">阅读 &rarr;</span></div>
+      </div>
+      <div class="paper-card" onclick="openModal('book','第二章：Prompt的本质是任务设计','2026-05-08 · 15 min',['如果把AI比作一个能力极强但理解能力有限的新人，那么Prompt就是你给这个新人发的任务说明书。','好的Prompt不是「魔法咒语」，而是「结构化的任务描述」。它需要包含：背景信息、任务目标、输出格式、质量标准和约束条件。','我见过最差的Prompt是：「帮我写个方案」。最好的Prompt是：「我现在需要做一个面向中小企业主的AI科普讲座方案，时长1小时，听众平均年龄45岁，对技术零基础。请给我一个30分钟的互动环节设计方案，要简单、有趣、有参与感。」','后者之所以好，不是因为它长，而是因为它清晰。它给出了足够多的「上下文锚点」，让AI能够精准理解你的需求边界。','记住：你和AI之间的沟通质量，取决于你对自己需求的清晰程度。Prompt engineering，本质上是在训练你的「需求拆解能力」。'])">
+        <span class="ch-number">02</span>
+        <span class="bookmark">第二章</span>
+        <h3>Prompt的本质是任务设计</h3>
+        <p>好的Prompt不是魔法咒语，而是结构化的任务描述。</p>
+        <div class="foot"><span>2026-05-08 · 15 min</span><span style="color:var(--accent);font-weight:600">阅读 &rarr;</span></div>
+      </div>
+      <div class="paper-card" onclick="openModal('book','第三章：AI协作的基本法则','2026-05-06 · 10 min',['与AI协作不是把事情交给它做，而是你们共同完成一件事。这需要建立一套新的工作习惯。','原则一：明确角色。你是决策者，AI是执行者。不要让它替你做判断，只让它帮你做执行。','原则二：结构化输入。你说得越清楚，它做得越好。不要扔一句话就跑，给够上下文。','原则三：迭代优化。AI第一次给的东西通常只是60分，你需要告诉它哪里要改，它才能一步步逼近你想要的结果。','这三原则听起来简单，但真正能做到的人很少。因为它要求你对自己的需求非常清晰——而这是ai时代最重要的能力。'])">
+        <span class="ch-number">03</span>
+        <span class="bookmark">第三章</span>
+        <h3>AI协作的基本法则</h3>
+        <p>建立与AI高效协作的三个基本原则：明确角色、结构化输入、迭代优化。</p>
+        <div class="foot"><span>2026-05-06 · 10 min</span><span style="color:var(--accent);font-weight:600">阅读 &rarr;</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 2: NOTES — 标签流 -->
+  <div class="module">
+    <div class="module-header">
+      <h2>&#128221; 精选笔记</h2>
+      <a class="more" onclick="switchPage('notes')">查看更多 &rarr;</a>
+    </div>
+    <div class="note-flow">
+      <div class="tag-card" onclick="openModal('note','用Claude做代码评审的Prompt模板','2026-05-12 · 5 min',['最近在项目里实验用Claude做代码评审，试了几轮后沉淀了一个好用的模板：','「你是一个资深代码评审专家。请评审以下代码变更，关注：1. 安全隐患 2. 性能问题 3. 可维护性 4. 边界情况。请按严重程度分级给出建议。」','效果很好，能发现一些人类review容易忽略的细节点。','核心套路：「你的角色 + 评审维度 + 输出格式要求」。'])">
+        <div class="tag-strip"><span class="t">AI工具</span><span class="t blue">代码</span><span class="t">Prompt</span></div>
+        <h3>用Claude做代码评审的Prompt模板</h3>
+        <p>分享一个我沉淀的代码评审Prompt模板，效果出奇地好。</p>
+        <div class="foot"><span>2026-05-12</span><span>5 min</span></div>
+      </div>
+      <div class="tag-card" onclick="openModal('note','卡片笔记法在AI时代的变体','2026-05-09 · 8 min',['卢曼的卡片笔记法（Zettelkasten）在AI时代有了新的生命力。','以前你需要自己建立卡片间的链接，现在AI可以帮你做「语义链接」。','我每天记录3-5张「原子笔记」，每张只记一个观点。每周让AI扫描一次，找出主题聚类和逻辑链条。','以前花30%时间在整理，现在只需要专注记录，整理交给AI。'])">
+        <div class="tag-strip"><span class="t green">方法论</span><span class="t">笔记</span><span class="t">AI</span></div>
+        <h3>卡片笔记法在AI时代的变体</h3>
+        <p>让AI帮你做语义链接，专注记录本身。</p>
+        <div class="foot"><span>2026-05-09</span><span>8 min</span></div>
+      </div>
+      <div class="tag-card" onclick="openModal('note','我的AI写作搭档配置方案','2026-05-05 · 6 min',['我的写作流程是：','1. 用Obsidian记录碎片想法（随时随地）','2. 用Claude帮我整理成结构化草稿','3. 用Prompt模板库做风格校准','4. 最后人工审核逻辑和观点','这个组合让我把「写」的时间减少了70%，但产出质量反而提升了。重点不是工具本身，是如何让它们各司其职。'])">
+        <div class="tag-strip"><span class="t">写作</span><span class="t">工作流</span><span class="t blue">AI工具</span></div>
+        <h3>我的AI写作搭档配置方案</h3>
+        <p>Obsidian + Claude + Prompt模板库，打造高效写作系统。</p>
+        <div class="foot"><span>2026-05-05</span><span>6 min</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 3: INSPIRE — 时间线 -->
+  <div class="module">
+    <div class="module-header">
+      <h2>&#9889; 灵感 · 实验</h2>
+      <a class="more" onclick="switchPage('inspire')">查看更多 &rarr;</a>
+    </div>
+    <div class="timeline">
+      <div class="tl-item" onclick="openModal('inspire','AI 面试官模拟器','2026-05-13',['想法：做一个AI驱动的面试模拟工具，针对不同岗位生成个性化面试问题。','当前状态：已完成MVP原型，支持技术岗位模拟面试。用Claude驱动对话逻辑。','下一步：增加面试记录回放功能，让用户能复盘自己的回答。'])">
+        <div class="tl-top">
+          <span class="tl-icon">&#128640;</span>
+          <h4>AI 面试官模拟器</h4>
+          <span class="tl-status">进行中</span>
+        </div>
+        <p>已完成MVP原型，支持技术岗位模拟面试，下一步增加回放功能。</p>
+        <div class="tl-date">2026-05-13</div>
+      </div>
+      <div class="tl-item" onclick="openModal('inspire','「每日AI简报」自动生成器','2026-05-11',['想法：每天自动抓取AI领域重要新闻，用AI摘要后生成5分钟可读完的简报。','当前状态：脚本已跑通，用RSS+Claude API，每天早上8点推送。','思考：可作为「AI自动化工作流」的教学案例。'])">
+        <div class="tl-top">
+          <span class="tl-icon">&#128240;</span>
+          <h4>「每日AI简报」自动生成器</h4>
+          <span class="tl-status done">已完成</span>
+        </div>
+        <p>RSS+Claude API 实现每日AI资讯摘要推送。</p>
+        <div class="tl-date">2026-05-11</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-top">
+          <span class="tl-icon">&#128200;</span>
+          <h4>个人知识图谱可视化</h4>
+          <span class="tl-status paused">探索中</span>
+        </div>
+        <p>用AI分析笔记库，自动生成个人知识图谱，直观展示知识结构。</p>
+        <div class="tl-date">探索中</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 4: GROWTH LOG -->
+  <div class="module">
+    <div class="module-header">
+      <h2>&#127793; 成长日志</h2>
+      <a class="more" onclick="switchPage('growth')">查看全部 &rarr;</a>
+    </div>
+    <div class="growth-list">
+      <div class="growth-item" onclick="openModal('growth','网站上线！从零到有的第一步','2026-05-14',['今天，我们的网站正式上线了！','从只有一个想法，到一点点把网站搭建起来，这个过程本身就是一种成长。','感谢每一个看到这个网站的人，也感谢愿意相信我的读者。','这只是开始，后面还有很长的路要走——书稿要写，案例要积累，方法要打磨。但没关系，我们一起慢慢来。','路虽远，行则将至。'])">
+        <div class="growth-date">2026-05-14</div>
+        <div class="growth-content">
+          <h3>网站上线！从零到有的第一步</h3>
+          <p>今天，我们的网站正式上线了！从只有一个想法，到一点点把网站搭建起来...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
+<!-- ============================ BOOK ============================ -->
+<div class="page" id="page-book">
+  <div class="book-header">
+    <div class="book-selector">
+      <span class="book-label">当前书籍：</span>
+      <select id="bookSelect" onchange="switchBook(this.value)">
+        <option value="ai-thought" selected>AI时代系统思维</option>
+        <option value="new-book" disabled>更多书籍敬请期待</option>
+      </select>
+    </div>
+    <div class="book-meta">
+      <span class="book-update">更新于：2026-05-14</span>
+      <span class="book-version">版本：v0.1</span>
+    </div>
+  </div>
+  <div class="book-page">
+    <aside class="book-sidebar">
+      <h3>&#128214; 目录</h3>
+      <ul class="tree">
+        <li>
+          <div class="chapter active" onclick="toggleTree(this)">
+            <span class="arrow open">&#9654;</span> 基础模块
+          </div>
+          <ul class="sub open">
+            <li class="active" onclick="loadChapter('第01章','AI时代到底变了什么','2026-05-14')">第01章：AI时代到底变了什么</li>
+            <li onclick="loadChapter('第02章','AI世界地图','2026-05-14')">第02章：AI世界地图</li>
+            <li onclick="loadChapter('第03章','普通人为什么一定要学AI','2026-05-14')">第03章：普通人为什么一定要学AI</li>
+            <li onclick="loadChapter('第04章','Prompt的本质不是提问而是任务设计','2026-05-14')">第04章：Prompt的本质</li>
+            <li onclick="loadChapter('第05章','编程思维','2026-05-14')">第05章：编程思维</li>
+            <li onclick="loadChapter('第06章','国内AI工具怎么选','2026-05-14')">第06章：国内AI工具怎么选</li>
+            <li onclick="loadChapter('第07章','AI编程与自动化工具','2026-05-14')">第07章：AI编程与自动化工具</li>
+          </ul>
+        </li>
+        <li>
+          <div class="chapter" onclick="toggleTree(this)">
+            <span class="arrow">&#9654;</span> 成长模块
+          </div>
+          <ul class="sub">
+            <li onclick="loadChapter('第08章','系统思维活案例','2026-05-14')">第08章：系统思维活案例</li>
+            <li onclick="loadChapter('第09章','工具探索亲历','2026-05-14')">第09章：工具探索亲历</li>
+            <li onclick="loadChapter('第10章','踩坑实录','2026-05-14')">第10章：踩坑实录</li>
+            <li onclick="loadChapter('第11章','股票系统案例','2026-05-14')">第11章：股票系统案例</li>
+            <li onclick="loadChapter('第12章','OPC训练营案例','2026-05-14')">第12章：OPC训练营案例</li>
+            <li onclick="loadChapter('第13章','GitHub学习资源','2026-05-14')">第13章：GitHub学习资源</li>
+            <li onclick="loadChapter('第14章','Agent互通实验','2026-05-14')">第14章：Agent互通实验</li>
+            <li onclick="loadChapter('第15章','系统设计成本教训','2026-05-14')">第15章：系统设计成本教训</li>
+            <li onclick="loadChapter('第16章','编程工具认知转变','2026-05-14')">第16章：编程工具认知转变</li>
+            <li onclick="loadChapter('第18章','成长日志','2026-05-14')">第18章：成长日志</li>
+          </ul>
+        </li>
+      </ul>
+    </aside>
+    <main class="book-content" id="bookContent">
+      <div class="breadcrumb">&#128214; <span>基础模块</span> / 第01章</div>
+      <h1>AI时代到底变了什么</h1>
+      <div class="meta">2026-05-14 · 约12 min 阅读</div>
+      <div class="body">
+        <h3>一、常见误区</h3>
+        <p><strong>误区一：AI就是更聪明的搜索引擎。</strong>这是最常见的误解。搜索引擎是"你问它答，它给你一堆链接"；AI是"你告诉它目标，它帮你完成任务"。区别不是快一点慢一点，是完全不同的逻辑。</p>
+        <p><strong>误区二：AI跟我没关系，我是搞XX的。</strong>我以前也这么想。我一个学制药工程的学生，AI跟我有什么关系？后来发现——AI不挑行业，它挑的是"有没有重复性脑力劳动"。</p>
+        <p><strong>误区三：AI写东西做图都是噱头，真正干活还得靠自己。</strong>这个误区往往来自于"试了一下觉得不够好"。但问题可能不在AI，在你还不知道怎么用。</p>
+        <h3>二、AI到底改变了什么</h3>
+        <p><strong>AI把"能不能做到"变成了"想不想做"。</strong></p>
+        <p>以前你想做一个网站 → 你得学编程（半年）<br>以前你想分析一堆数据 → 你得会Excel高级功能或者Python（三个月）<br>以前你想画一张图 → 你得学设计（更久）</p>
+        <p>现在呢？你想做网站 → 描述需求，AI帮你生成。<strong>能力门槛被系统性地降低了。</strong></p>
+        <h3>三、一个真实的验证过程</h3>
+        <p><strong>第一层：聊天工具（DeepSeek）</strong><br>我第一次用AI就是聊天。问它问题，它回答。挺神奇的，但也就那样。</p>
+        <p><strong>第二层：多模态（豆包）</strong><br>我转到豆包，因为它能识图。拍个叶子告诉我是啥植物，拍个说明书帮我翻译。这个阶段我开始意识到——AI能"看懂"现实世界。</p>
+        <p><strong>第三层：做东西（Qclaw / Workbody）</strong><br>有一天我发现这些工具能做网站。描述一个需求，AI直接吐出一个能打开的网页。之前"做网站"这件事对我来说等于"程序员专属"。但当我自己亲手描述需求、看到页面跑起来的那一刻——我第一次意识到：不是我变强了，是门槛变低了。</p>
+        <p><strong>第四层：做系统（股票交易系统）</strong><br>做网站已经满足不了我。我开始尝试搭一个股票交易系统——数据获取、分析、策略、执行。最终部分功能跑通了，效果超出预期。一个专业不对口的学生，做出来了一个有复杂度的系统。</p>
+        <p><strong>第五层：团队协作（OPC训练营）</strong><br>后来参加南京大学和南京人才集团的OPC训练营，和团队一起做线上分诊小程序。这个阶段我学会了：一个人能做prototype，团队才能做产品。</p>
+      </div>
+      <div class="grow-note">
+        <strong>&#127793; 作者笔记</strong>
+        <p>写这一章的时候我想起了自己从DeepSeek一路试过来的经历。说实话，如果当初有人告诉我"AI能做网站、能做系统"，我肯定不信。正是因为我自己一步步试过来的，我才有底气写这一章——因为它不是我推理出来的结论，是我走出来的路。</p>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ============================ NOTES ============================ -->
+<div class="page" id="page-notes">
+  <div class="list-page">
+    <h1>&#128221; 个人笔记</h1>
+    <p class="subtitle">零散但锋利的思考碎片与方法记录。</p>
+    <div class="list-item" onclick="openModal('note','用Claude做代码评审的Prompt模板','2026-05-12 · 5 min',['最近在项目里实验用Claude做代码评审，试了几轮后沉淀了一个好用的模板：','「你是一个资深代码评审专家。请评审以下代码变更，关注：1. 安全隐患 2. 性能问题 3. 可维护性 4. 边界情况。请按严重程度分级给出建议。」','效果很好，能发现一些人类review容易忽略的细节点。','核心套路：「你的角色 + 评审维度 + 输出格式要求」。'])">
+      <div class="cat-label">&#128187; AI 实验</div>
+      <h3>用Claude做代码评审的Prompt模板</h3>
+      <p>分享一个我沉淀的代码评审Prompt模板，效果出奇地好。</p>
+      <div class="foot"><span>2026-05-12 · 5 min</span><div class="tags"><span class="t">AI工具</span><span class="t">Prompt</span></div></div>
+    </div>
+    <div class="list-item" onclick="openModal('note','卡片笔记法在AI时代的变体','2026-05-09 · 8 min',['卢曼的卡片笔记法（Zettelkasten）在AI时代有了新的生命力。','以前你需要自己建立卡片之间的链接，现在AI可以帮你做「语义链接」。','我每天记录3-5张「原子笔记」，每周让AI扫描一次笔记库，找出主题聚类和逻辑链条。','以前花30%时间在整理，现在只需要专注记录，整理交给AI。'])">
+      <div class="cat-label">&#128221; 方法</div>
+      <h3>卡片笔记法在AI时代的变体</h3>
+      <p>让AI帮你做语义链接，专注记录本身。</p>
+      <div class="foot"><span>2026-05-09 · 8 min</span><div class="tags"><span class="t">方法论</span><span class="t">笔记</span></div></div>
+    </div>
+    <div class="list-item">
+      <div class="cat-label">&#128221; 心得</div>
+      <h3>我的AI写作搭档配置方案</h3>
+      <p>Obsidian + Claude + Prompt模板库，打造高效写作系统。</p>
+      <div class="foot"><span>2026-05-05 · 6 min</span><div class="tags"><span class="t">写作</span><span class="t">工作流</span></div></div>
+    </div>
+    <div class="list-item">
+      <div class="cat-label">&#128187; AI 实验</div>
+      <h3>用AI做周报自动汇总的实验</h3>
+      <p>试了用AI自动汇总团队周报生成摘要，准确率85%，仍需人工校对。</p>
+      <div class="foot"><span>2026-04-30 · 4 min</span><div class="tags"><span class="t">AI工具</span><span class="t">自动化</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ INSPIRE ============================ -->
+<div class="page" id="page-inspire">
+  <div class="list-page">
+    <h1>&#9889; 灵感 · 实验</h1>
+    <p class="subtitle">正在孵化的想法和短期项目记录，不定期更新。</p>
+    <div class="list-item" onclick="openModal('inspire','AI 面试官模拟器','2026-05-13',['想法：做一个AI驱动的面试模拟工具，针对不同岗位生成个性化面试问题。','当前状态：已完成MVP原型，支持技术岗位模拟面试。','下一步：增加面试记录回放功能。'])">
+      <div class="cat-label">&#128640; 进行中</div>
+      <h3>AI 面试官模拟器</h3>
+      <p>已完成MVP原型，支持技术岗位模拟面试，下一步增加回放功能。</p>
+      <div class="foot"><span>2026-05-13</span></div>
+    </div>
+    <div class="list-item">
+      <div class="cat-label">&#128240; 已完成</div>
+      <h3>「每日AI简报」自动生成器</h3>
+      <p>RSS+Claude API 实现每日AI资讯摘要推送。脚本已跑通。</p>
+      <div class="foot"><span>2026-05-11</span></div>
+    </div>
+    <div class="list-item">
+      <div class="cat-label">&#128200; 探索中</div>
+      <h3>个人知识图谱可视化</h3>
+      <p>用AI分析笔记库，自动生成个人知识图谱。</p>
+      <div class="foot"><span>探索中</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ ABOUT ============================ -->
+<div class="page" id="page-about">
+  <div class="about-page">
+    <div class="about-card">
+      <div class="about-avatar">
+        <div class="avatar-placeholder">Q</div>
+      </div>
+      <h1>关于作者</h1>
+      <p class="about-subtitle">双一流大四 · 制药工程 · AI探索者</p>
+      <div class="about-body">
+        <p>你好，我是 Q，一个普通的大四学生，专业是制药工程——听起来和AI八竿子打不着对吧？</p>
+        <p><strong>我和AI的故事，是一个普通人不断折腾的过程。</strong></p>
+        <p>从 DeepSeek 到豆包，再到千问、Kimi……我几乎试遍了市面上所有的 AI 产品。慢慢发现，这些工具能做的事情远比想象的要多。</p>
+        <p>后来开始不满足于"聊天"，尝试用 AI 搭建一些实际的东西——从简单的网页，到复杂的项目。在这个过程中，我参加了南大菁英训练营，并组建团队创立了 OPC，目前正在准备5月底的路演决赛。</p>
+        <p>我也在不断折腾更好的使用方法——尝试让不同的 Agent 互相协作，探索怎么让 AI 自动沉淀经验变成可复用的技能。</p>
+        <p>一路下来，我的感受是：<strong>AI 没那么神秘，普通人也能玩得转</strong>。很多人对 AI 感到迷茫，不敢行动，我想把我的经历和方法分享出来，让更多和我一样的普通人，也能找到自己的 AI 之路。</p>
+      </div>
+    </div>
+    <div class="about-card">
+      <h2>&#128221; 写作理念</h2>
+      <ul class="about-principles">
+        <li>
+          <strong>不是工具说明书</strong>
+          <span>——不教你怎么装软件、怎么调参数，这些三个月后就过时了。</span>
+        </li>
+        <li>
+          <strong>不是编程教材</strong>
+          <span>——不需要你会写代码，但会帮你建立"计算思维"。</span>
+        </li>
+        <li>
+          <strong>不是Prompt合集</strong>
+          <span>——Prompt本身不值钱，值钱的是你对任务的拆解能力。</span>
+        </li>
+        <li>
+          <strong>是一本成长体系书</strong>
+          <span>——从使用者到构建者，四个Level，一步一步带你走。</span>
+        </li>
+      </ul>
+    </div>
+    <div class="about-card">
+      <h2>&#9998; 写作搭档</h2>
+      <p style="font-size:14px;color:var(--text-secondary);line-height:1.8">本书由 <strong style="color:var(--text)">真人作者 + AI写作搭档</strong> 协作完成。AI负责初稿生成与信息梳理，人负责逻辑判断、经验注入与风格把控。这不是偷懒，这是AI时代的生产方式——<strong style="color:var(--text)">AI负责执行，人负责逻辑</strong>。</p>
+    </div>
+    <div class="about-card">
+      <h2>&#128172; 互动区</h2>
+      <p style="font-size:14px;color:var(--text-secondary);margin-bottom:16px">有任何想法、问题或建议，欢迎留言交流。</p>
+      <div class="comment-form">
+        <input type="text" class="comment-input" placeholder="你的昵称（选填）">
+        <textarea class="comment-textarea" placeholder="写下你的想法..."></textarea>
+        <button class="btn-send" onclick="sendComment()">发送留言</button>
+      </div>
+      <div class="comment-list" id="commentList">
+        <div class="comment-item">
+          <div class="comment-avatar">读</div>
+          <div class="comment-content">
+            <div class="comment-meta"><span class="comment-name">读者</span><span class="comment-time">2026-05-14</span></div>
+            <p class="comment-text">期待这本书！作为AI小白，很需要这样的入门指南。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="site-footer">
+  <div class="logo">墨积<span>·</span>成长 <small>InkGrowth</small></div>
+  <p>从笔记到智慧，陪你一起成长 &nbsp;·&nbsp; Notes today, growth tomorrow</p>
+  <p style="margin-top:6px">&copy; 2026 墨积成长</p>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" onclick="event && event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <div class="tag" id="modalTag">标签</div>
+    <h2 id="modalTitle">标题</h2>
+    <div class="meta" id="modalMeta">日期</div>
+    <div class="body" id="modalBody"><p>内容</p></div>
+  </div>
+</div>
+
+<script>
+
+
+
+
+  const saved = localStorage.getItem('inkgrowth-theme');
+  if(saved==='dark') document.body.classList.add('dark');
+  document.getElementById('themeToggle').addEventListener('click',()=>{
+    document.body.classList.toggle('dark');
+    localStorage.setItem('inkgrowth-theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+  });
+  const nav = document.getElementById('mainNav');
+  document.getElementById('mobileMenuBtn').addEventListener('click',()=>nav.classList.toggle('open'));
+  function switchPage(name){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    const page = document.getElementById('page-'+name);
+    if(page) page.classList.add('active');
+    document.querySelectorAll('.nav a[data-page]').forEach(a=>{
+      a.classList.toggle('active', a.getAttribute('data-page')===name);
+    });
+    nav.classList.remove('open');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  document.querySelectorAll('.nav a[data-page]').forEach(a=>{
+    a.addEventListener('click',()=>switchPage(a.getAttribute('data-page')));
+  });
+  function toggleTree(el){
+    el.querySelector('.arrow').classList.toggle('open');
+    el.nextElementSibling.classList.toggle('open');
+  }
+  function switchBook(bookId){
+    if(bookId === 'new-book'){alert('更多书籍正在筹备中，敬请期待！');return}
+    alert('切换到：' + bookId);
+  }
+  function loadChapter(ch, title, date){
+    document.querySelectorAll('.tree .chapter').forEach(c=>c.classList.remove('active'));
+    document.querySelectorAll('.tree .sub li').forEach(l=>l.classList.remove('active'));
+    const labels = {'第01章':'基础模块','第02章':'基础模块','第03章':'基础模块','第04章':'基础模块','第05章':'基础模块','第06章':'基础模块','第07章':'基础模块','第08章':'成长模块','第09章':'成长模块','第10章':'成长模块','第11章':'成长模块','第12章':'成长模块','第13章':'成长模块','第14章':'成长模块','第15章':'成长模块','第16章':'成长模块','第18章':'成长模块'};
+    let content = '';
+    if(ch === '第01章'){
+      content = '<h2>一、小白常见误区</h2><p>我身边很多人对AI的理解，大概分成三种。你看看自己属于哪一种。</p>';
+    } else if(ch === '第02章'){
+      content = '<h2>一、小白常见误区</h2><p>我刚开始也踩过这些坑，你看看你有没有。</p>';
+    } else if(ch === '第03章'){
+      content = '<h2>一、小白常见误区</h2><p>关于"学AI"这件事，我见过最多的三种想法。</p>';
+    } else if(ch === '第04章'){
+      content = '<h3>一、常见误区</h3><p><strong>误区一：Prompt = 提问。</strong>Prompt的本质不是"怎么问"，而是"怎么设计任务"。</p>';
+    } else if(ch === '第05章'){
+      content = '<h3>一、常见误区</h3><p><strong>误区一：学编程 = 学写代码 = 当程序员。</strong>这是最让人望而却步的误解。</p>';
+    } else if(ch === '第06章'){
+      content = '<h3>一、常见误区</h3><p><strong>误区一：只用一个工具就够了。</strong>不同工具擅长不同场景，多工具组合才是最优解。</p>';
+    } else if(ch === '第07章'){
+      content = '<h3>一、常见误区</h3><p><strong>误区一：AI编程是程序员的事。</strong>普通人也能用AI编程！</p>';
+    } else {
+      content = '<p>本章内容正在整理中...</p>';
+    }
+    let note = '';
+    if(ch === '第01章') note = '<p>写这一章的时候...</p>';
+    document.querySelector('#bookContent').innerHTML = '<div class="breadcrumb">&#128214; <span>'+(labels[ch]||'书稿')+'</span> / '+title+'</div><h1>'+title+'</h1><div class="meta">'+date+' · 约12 min 阅读</div><div class="body">'+content+'</div><div class="grow-note"><strong>&#127793; 作者笔记</strong>'+note+'</div>';
+  }function openModal(tag, title, meta, paragraphs){
+    const labels = {book:'📖 书稿',note:'📝 笔记',inspire:'⚡ 灵感'};
+    document.getElementById('modalTag').textContent = labels[tag]||'📄';
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalMeta').textContent = meta;
+    document.getElementById('modalBody').innerHTML = paragraphs.map(p=>`<p>${p}</p>`).join('');
+    document.getElementById('modalOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(e){
+    // 如果传了 event 参数且点击的是模态框内部（不是遮罩层），则不关闭
+    if(e && e.target !== e.currentTarget) {
+      // 点击的是模态框内容区域，不关闭
+      return;
+    }
+    document.getElementById('modalOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function sendComment(){
+    const input = document.querySelector('.comment-input');
+    const textarea = document.querySelector('.comment-textarea');
+    const btn = document.querySelector('.btn-send');
+    if(!textarea.value.trim()){textarea.focus();return}
+    const name = input.value.trim() || '读者';
+    const time = new Date().toISOString().split('T')[0];
+    const list = document.getElementById('commentList');
+    const item = document.createElement('div');
+    item.className = 'comment-item';
+    item.innerHTML = `<div class="comment-avatar">${name[0]}</div><div class="comment-content"><div class="comment-meta"><span class="comment-name">${name}</span><span class="comment-time">${time}</span></div><p class="comment-text">${textarea.value}</p></div>`;
+    list.insertBefore(item,list.firstChild);
+    textarea.value = '';
+    input.value = '';
+    btn.textContent = '已发送';
+    setTimeout(()=>btn.textContent = '发送留言',1500);
+  }
+  document.addEventListener('keydown',e=>{if(e.key==='Escape') closeModal()});
+
+
+
+
+</script></script></script>
+</body>
+</html>
