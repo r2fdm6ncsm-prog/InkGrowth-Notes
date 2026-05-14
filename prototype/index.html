@@ -596,7 +596,7 @@
       <h3>&#128214; 目录</h3>
       <ul class="tree">
         <li>
-          <div class="chapter active" onclick="toggleTree(this)">
+          <div class="chapter" onclick="toggleTree(this)">
             <span class="arrow open">&#9654;</span> 基础模块 <span style="font-size:11px;color:var(--text-muted);margin-left:auto">🌳 稳定</span>
           </div>
           <ul class="sub open">
@@ -832,6 +832,21 @@
     window.scrollTo({top:0,behavior:'smooth'});
     document.querySelectorAll('.tree .chapter').forEach(c=>c.classList.remove('active'));
     document.querySelectorAll('.tree .sub li').forEach(l=>l.classList.remove('active'));
+    document.querySelectorAll('.tree .sub li').forEach(li=>{
+      if(li.textContent.includes(ch)){
+        li.classList.add('active');
+        const sub = li.closest('.sub');
+        if(sub){
+          sub.classList.add('open');
+          const chDiv = sub.previousElementSibling;
+          if(chDiv&&chDiv.classList.contains('chapter')){
+            chDiv.classList.add('active');
+            const arr = chDiv.querySelector('.arrow');
+            if(arr) arr.classList.add('open');
+          }
+        }
+      }
+    });
     const labels = {'第01章':'基础模块','第02章':'基础模块','第03章':'基础模块','第04章':'基础模块','第05章':'基础模块','第06章':'基础模块','第07章':'基础模块','第08章':'成长模块','第09章':'成长模块','第10章':'成长模块','第11章':'成长模块','第12章':'成长模块','第13章':'成长模块','第14章':'成长模块','第15章':'成长模块','第16章':'成长模块','第17章':'成长模块','第18章':'成长模块','第19章':'实验模块','第20章':'实验模块'};
     let content = '';
     if(ch === '第01章'){
@@ -912,8 +927,7 @@
 <blockquote>
 以前你问"这事我能做吗"，现在你该问"这事我想做吗"。
 </blockquote>
-<hr>
-<p>🌱 <strong>作者笔记</strong></p>`;
+`;
     } else if(ch === '第02章'){
       content = `<blockquote>
 本章解决一个问题：AI世界到底长什么样？有哪些东西？怎么分类？
@@ -1025,8 +1039,7 @@
 你手里拿着锤子的时候，看什么都像钉子。
 你手里拿着AI地图的时候，才知道该用锤子还是用螺丝刀。
 </blockquote>
-<hr>
-<p>🌱 <strong>作者笔记</strong></p>`;
+`;
     } else if(ch === '第03章'){
       content = `<blockquote>
 本章解决一个灵魂问题：我不是程序员、不是科技从业者，AI跟我有什么关系？
@@ -1135,23 +1148,7 @@
 阻止你做成一件事的，不是"你不会"，而是"你没想到还能这样"。
 </blockquote>
 <hr>
-<p>🌱 <strong>作者笔记</strong></p>
-<p>写这一章的时候我反复在想：如果一年前的我看到这一章，我会怎么想？大概率是"说得有道理但我还是不知道从哪开始"。所以我刻意写得离地很近——不是讲大道理，就是告诉你"我是怎么开始的"。因为我知道，当你知道一个和你差不多的人走通了这条路，你自己也会想试试。</p>
-<hr>
-<h2>🌱 生长层·一个观察：AI不是在干掉所有编程岗位</h2>
-<hr>
-<h2>🌱 生长层·入门两步走</h2>
-<p>一路折腾下来，如果让我给刚起步的人一个最精简的起点，我会说——<strong>先把这两个玩熟。</strong></p>
-<h3>第一步：ima 笔记</h3>
-<p>ima 是一个笔记软件，但它解决的痛点很实在：你每天接触的信息太多了——文章、截图、聊天记录、灵感片段……散落在各个地方，想用的时候找不到。</p>
-<p>ima 的核心价值不是"写"，而是<strong>收</strong>。你把碎片扔进去，它帮你整理、连接、沉淀。对学习 AI 的人来说，这意味着你不需要一开始就建立"完美知识体系"——先记下来，让工具帮你把线索串起来。对工作人士来说，它解决的是跨设备信息同步的问题。</p>
-<h3>第二步：Qclaw</h3>
-<p>Qclaw（小龙虾）是腾讯出的 AI 编程工具。推荐它的原因很简单——它是<strong>门槛最低的"做出来"体验</strong>。不需要配环境、不需要学命令行，安装打开就能用。你描述需求，它帮你生成代码、跑出结果。</p>
-<p>这个体验很重要：很多人学 AI 卡住不是因为不想学，是因为试了好几个工具都没做出像样的东西，然后放弃了。Qclaw 把"第一次做出东西"的成本降到了最低。</p>
-<h3>为什么是这两个</h3>
-<p>一个管<strong>输入</strong>（ima 收信息），一个管<strong>输出</strong>（Qclaw 做东西）。先用 ima 养成记录和整理的习惯，再用 Qclaw 体验"用 AI 做出东西"的感觉。两条腿都站稳了，再往外探索。</p>
-<blockquote>不是工具越多学得越快，是先把一两个用透，建立了正反馈，后面的路自然就打开了。</blockquote>
-<hr>`;
+`;
     } else if(ch === '第04章'){
       content = `<blockquote>
 本章解决一个核心问题：为什么AI经常听不懂你的话？怎么才能让它一次就懂？
@@ -1608,7 +1605,19 @@ AI不是听不懂你，是你还没学会给它画施工图。
 <p>   - 工作流玩家 → 主AI Agent，辅Coding Agent</p>
 <p>很多人（包括我自己）其实在两个世界之间——<strong>需要写代码，但不是程序员；需要自动化，但也想做东西。</strong> 那就不需要二选一，而是两个都要，分主次。</p>
 <hr>
-<h2>五、上手：给你的工具重新分类</h2>
+<h2>五、入门两步走：我给新人的推荐</h2>
+<p>一路折腾下来，如果让我给刚起步的人一个最精简的起点，我会说——<strong>先把这两个玩熟。</strong></p>
+<h3>第一步：ima 笔记</h3>
+<p>ima 是一个笔记软件，但它解决的痛点很实在：你每天接触的信息太多了——文章、截图、聊天记录、灵感片段……散落在各个地方，想用的时候找不到。</p>
+<p>ima 的核心价值不是"写"，而是<strong>收</strong>。你把碎片扔进去，它帮你整理、连接、沉淀。对学习 AI 的人来说，这意味着你不需要一开始就建立"完美知识体系"——先记下来，让工具帮你把线索串起来。对工作人士来说，它解决的是跨设备信息同步的问题。</p>
+<h3>第二步：Qclaw</h3>
+<p>Qclaw（小龙虾）是腾讯出的 AI 编程工具。推荐它的原因很简单——它是<strong>门槛最低的"做出来"体验</strong>。不需要配环境、不需要学命令行，安装打开就能用。你描述需求，它帮你生成代码、跑出结果。</p>
+<p>这个体验很重要：很多人学 AI 卡住不是因为不想学，是因为试了好几个工具都没做出像样的东西，然后放弃了。Qclaw 把"第一次做出东西"的成本降到了最低。</p>
+<h3>为什么是这两个</h3>
+<p>一个管<strong>输入</strong>（ima 收信息），一个管<strong>输出</strong>（Qclaw 做东西）。先用 ima 养成记录和整理的习惯，再用 Qclaw 体验"用 AI 做出东西"的感觉。两条腿都站稳了，再往外探索。</p>
+<blockquote>不是工具越多学得越快，是先把一两个用透，建立了正反馈，后面的路自然就打开了。</blockquote>
+<hr>
+<h2>六、上手：给你的工具重新分类</h2>
 <p>打开你的手机/电脑，列出你用过或正在用的所有AI工具。把它们分成两列：</p>
 <ul>
 <li>左边：主要用于写代码/开发的</li>
@@ -1616,7 +1625,7 @@ AI不是听不懂你，是你还没学会给它画施工图。
 </ul>
 <p>如果有一个工具你放不进任何一列——恭喜，你可能遇到了一个"跨界"工具，值得多研究一下。</p>
 <hr>
-<h2>六、本章总结</h2>
+<h2>七、本章总结</h2>
 <ul>
 <li>AI工具先分两大类：Coding Agent（编程）和 AI Agent（自动化）</li>
 <li>选工具的第一步不是比参数，是搞清楚你<strong>属于哪个世界</strong></li>
