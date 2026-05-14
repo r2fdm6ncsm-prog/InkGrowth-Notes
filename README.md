@@ -4,72 +4,8 @@
 
 ## 在线预览
 
-[🌐 墨积成长 | InkGrowth](https://r2fdm6ncsm-prog.github.io/InkGrowth-Notes/prototype/index.html)
-
-## 项目定位
-
-**不是**工具说明书，**不是**编程教材，**不是**Prompt合集。
-而是：**一本中国普通人的AI成长体系书 + 知识网站 + 内容IP**。
-
-## 四个成长Level
-
-| Level | 定位 | 目标 |
-|-------|------|------|
-| Level 1 | AI使用者 | 先进入AI世界，获得正反馈 |
-| Level 2 | AI协作者 | 建立Prompt、逻辑、系统思维 |
-| Level 3 | AI构建者 | 开始用AI做项目 |
-| Level 4 | AI系统设计者 | 设计智能系统 |
-
-## 项目结构
-
-```
-├── doc/           # 项目文档（PRD、写作规范、作者人格、部署说明）
-├── manuscript/    # 书稿正文（Markdown）
-├── prototype/     # 网站原型（HTML）
-├── archive/       # 项目存档
-├── project/       # 软件项目（保留）
-├── database/      # 数据库脚本（保留）
-├── utils/         # 工具脚本
-├── AGENTS.md      # AI Agent 交接文档
-└── README.md      # 本文件
-```
-
-## 核心观点
-
-- AI不是聊天工具，而是生产力系统
-- AI负责执行，人负责逻辑
-- Prompt本质是任务设计，不是提问
-- 未来最值钱的能力，是设计智能系统的能力
-
-## 品牌矩阵
-
-| 品牌 | 定位 | 状态 |
-|------|------|------|
-| 墨积成长 | 内容IP / 知识体系 | ✅ 已上线 |
-| OpenClaw | 硬件产品 / 工具包 | 🔄 规划中 |
+[🌐 墨积成长](https://r2fdm6ncsm-prog.github.io/InkGrowth-Notes/prototype/index.html)
 
 ## 技术栈
 
-| 层 | 技术 |
-|---|------|
-| 前端 | 原生 HTML + CSS + JS（单页应用） |
-| 托管 | GitHub Pages |
-| 自动部署 | GitHub Actions |
-
-## 内容状态
-
-- ✅ 全书PRD、22章大纲、作者人格、写作规范
-- ✅ 网站已上线（17章内容 + 笔记 + 灵感项目）
-- ✅ 前3章书稿Markdown（第1/2/14章）
-- 🔄 剩余章节写作进行中
-- 🔄 抖音/小红书起号进行中
-
-## 作者
-
-**Q** — 制药工程专业，AI自学者。
-从零开始探索AI，一路积累、一路分享。
-"AI负责执行，人负责逻辑。"
-
----
-
-*更新于 2026-05-14 · v0.1*
+原生 HTML + CSS + JS · GitHub Pages

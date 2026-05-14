@@ -4,6 +4,9 @@ node_modules/
 .DS_Store
 Thumbs.db
 
+# 仅保留网站运行必需的文件
+# 必需: index.html 404.html prototype/index.html README.md .gitignore
+
 # 内部文档 — 不上传公开仓库
 AGENTS.md
 .github/
@@ -12,3 +15,8 @@ manuscript/
 archive/
 .ruff_cache/
 nul
+
+# 空目录占位 — 仅本地保留
+project/
+database/
+utils/
