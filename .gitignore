@@ -3,3 +3,12 @@ node_modules/
 *.log
 .DS_Store
 Thumbs.db
+
+# 内部文档 — 不上传公开仓库
+AGENTS.md
+.github/
+doc/
+manuscript/
+archive/
+.ruff_cache/
+nul
