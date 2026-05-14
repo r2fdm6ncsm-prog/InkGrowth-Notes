@@ -173,21 +173,20 @@
   /* ===== HOME MODULE 2: NOTES (tag-flow style) ===== */
   .note-flow{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
   .tag-card{
-    background:var(--card);border-radius:var(--radius-sm);
+    background:var(--surface);border-radius:var(--radius-sm);
     border:1px solid var(--border-light);
+    border-left:3px solid var(--accent-light);
     padding:18px 20px;cursor:pointer;
     transition:all var(--transition);box-shadow:var(--shadow);
     position:relative;overflow:hidden;
   }
-  .tag-card::before{
-    content:'';position:absolute;top:0;left:0;right:0;
-    height:3px;
-    background:linear-gradient(90deg, var(--accent), var(--accent-light));
-    opacity:0;
-    transition:opacity var(--transition);
+  .tag-card::after{
+    content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+    background:linear-gradient(135deg, var(--accent-light) 0%, transparent 50%);
+    opacity:0;transition:opacity var(--transition);pointer-events:none;
   }
-  .tag-card:hover::before{opacity:1}
-  .tag-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover)}
+  .tag-card:hover::after{opacity:0.15}
+  .tag-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover);border-left-color:var(--accent)}
   .tag-card .tag-strip{
     display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;
   }
@@ -197,6 +196,8 @@
     letter-spacing:0.3px;
   }
   .tag-card .tag-strip .t.blue{background:#e0e7f0;color:#5a7a9a}
+  .dark .tag-card{background:linear-gradient(135deg, #2d2822 0%, #26211c 100%)}
+  .dark .tag-card::after{background:linear-gradient(135deg, var(--accent-light) 0%, transparent 50%)}
   .dark .tag-card .tag-strip .t.blue{background:#2a3540;color:#8aafd0}
   .tag-card .tag-strip .t.green{background:#dce8e0;color:#5a8a6a}
   .dark .tag-card .tag-strip .t.green{background:#28352e;color:#7aaa8a}
@@ -392,6 +393,28 @@
   .about-principles li strong{color:var(--text);white-space:nowrap}
   .about-principles li span{color:var(--text-secondary)}
 
+  /* ===== TABLE STYLES ===== */
+  .book-content table{
+    width:100%;border-collapse:collapse;margin:20px 0;
+    font-size:14px;line-height:1.6;
+    border-radius:var(--radius-sm);overflow:hidden;
+    box-shadow:var(--shadow);
+  }
+  .book-content table thead{background:var(--accent-light)}
+  .book-content table th{
+    text-align:left;padding:12px 16px;
+    font-weight:600;font-size:13px;color:var(--accent);
+    letter-spacing:0.3px;
+  }
+  .book-content table td{padding:10px 16px;border-top:1px solid var(--border-light)}
+  .book-content table tbody tr:nth-child(even){background:var(--surface)}
+  .book-content table tbody tr:hover{background:var(--accent-light)}
+  @media(max-width:600px){
+    .book-content table{font-size:13px}
+    .book-content table th,.book-content table td{padding:8px 10px}
+    .book-content .table-wrap{overflow-x:auto}
+  }
+
   /* ===== RESPONSIVE ===== */
   @media(max-width:900px){
     .book-page{grid-template-columns:1fr}
@@ -560,12 +583,12 @@
       <span class="book-label">当前书籍：</span>
       <select id="bookSelect" onchange="switchBook(this.value)">
         <option value="ai-thought" selected>AI时代系统思维</option>
-        <option value="new-book" disabled>更多书籍敬请期待</option>
+        <option value="growing" disabled>🔵 持续生长中 · 内容不断更新</option>
       </select>
     </div>
     <div class="book-meta">
       <span class="book-update">更新于：2026-05-14</span>
-      <span class="book-version">版本：v0.1</span>
+      <span class="book-version">版本：v1.1 · 生长中</span>
     </div>
   </div>
   <div class="book-page">
@@ -574,33 +597,43 @@
       <ul class="tree">
         <li>
           <div class="chapter active" onclick="toggleTree(this)">
-            <span class="arrow open">&#9654;</span> 基础模块
+            <span class="arrow open">&#9654;</span> 基础模块 <span style="font-size:11px;color:var(--text-muted);margin-left:auto">🌳 稳定</span>
           </div>
           <ul class="sub open">
-            <li onclick="loadChapter('第01章','AI时代到底变了什么','2026-05-14')">第01章：AI时代到底变了什么</li>
-            <li onclick="loadChapter('第02章','AI世界地图','2026-05-14')">第02章：AI世界地图</li>
-            <li onclick="loadChapter('第03章','普通人为什么一定要学AI','2026-05-14')">第03章：普通人为什么一定要学AI</li>
-            <li onclick="loadChapter('第04章','Prompt的本质不是提问而是任务设计','2026-05-14')">第04章：Prompt的本质</li>
-            <li onclick="loadChapter('第05章','编程思维','2026-05-14')">第05章：编程思维</li>
-            <li onclick="loadChapter('第06章','国内AI工具怎么选','2026-05-14')">第06章：国内AI工具怎么选</li>
-            <li onclick="loadChapter('第07章','AI编程与自动化工具','2026-05-14')">第07章：AI编程与自动化工具</li>
+            <li onclick="loadChapter('第01章','AI时代到底变了什么','2026-05-14')">🌳 第01章：AI时代到底变了什么</li>
+            <li onclick="loadChapter('第02章','AI世界地图','2026-05-14')">🌳 第02章：AI世界地图</li>
+            <li onclick="loadChapter('第03章','普通人为什么一定要学AI','2026-05-14')">🌳 第03章：普通人为什么一定要学AI</li>
+            <li onclick="loadChapter('第04章','Prompt的本质不是提问而是任务设计','2026-05-14')">🌳 第04章：Prompt的本质</li>
+            <li onclick="loadChapter('第05章','编程思维','2026-05-14')">🌳 第05章：编程思维</li>
+            <li onclick="loadChapter('第06章','国内AI工具怎么选','2026-05-14')">🌳 第06章：国内AI工具怎么选</li>
+            <li onclick="loadChapter('第07章','AI编程与自动化工具','2026-05-14')">🌳 第07章：AI编程与自动化工具</li>
           </ul>
         </li>
         <li>
           <div class="chapter" onclick="toggleTree(this)">
-            <span class="arrow">&#9654;</span> 成长模块
+            <span class="arrow">&#9654;</span> 成长模块 <span style="font-size:11px;color:var(--text-muted);margin-left:auto">🌱 持续生长</span>
           </div>
           <ul class="sub">
-            <li onclick="loadChapter('第08章','国内AI工具怎么选','2026-05-14')">第08章：国内AI工具怎么选</li>
-            <li onclick="loadChapter('第09章','AI编程与自动化工具','2026-05-14')">第09章：AI编程与自动化工具</li>
-            <li onclick="loadChapter('第10章','数据库低代码与Agent平台','2026-05-14')">第10章：数据库低代码与Agent平台</li>
-            <li onclick="loadChapter('第11章','AI学习和办公','2026-05-14')">第11章：AI学习和办公</li>
-            <li onclick="loadChapter('第12章','AI做内容和写作','2026-05-14')">第12章：AI做内容和写作</li>
-            <li onclick="loadChapter('第13章','用AI做小工具和小程序','2026-05-14')">第13章：用AI做小工具和小程序</li>
-            <li onclick="loadChapter('第14章','真实案例拆解','2026-05-14')">第14章：真实案例拆解</li>
-            <li onclick="loadChapter('第15章','什么是AI Agent','2026-05-14')">第15章：什么是AI Agent</li>
-            <li onclick="loadChapter('第16章','AI系统如何组成','2026-05-14')">第16章：AI系统如何组成</li>
-            <li onclick="loadChapter('第17章','AI变现','2026-05-14')">第17章：AI变现</li>
+            <li onclick="loadChapter('第08章','系统思维活案例','2026-05-14')">🌱 第08章：系统思维活案例</li>
+            <li onclick="loadChapter('第09章','工具探索亲历','2026-05-14')">🌱 第09章：工具探索亲历</li>
+            <li onclick="loadChapter('第10章','踩坑实录','2026-05-14')">🌱 第10章：踩坑实录</li>
+            <li onclick="loadChapter('第11章','股票系统案例','2026-05-14')">🌱 第11章：股票系统案例</li>
+            <li onclick="loadChapter('第12章','OPC训练营案例','2026-05-14')">🌱 第12章：OPC训练营案例</li>
+            <li onclick="loadChapter('第13章','GitHub学习资源','2026-05-14')">🌱 第13章：GitHub学习资源</li>
+            <li onclick="loadChapter('第14章','Agent互通实验','2026-05-14')">🌱 第14章：Agent互通实验</li>
+            <li onclick="loadChapter('第15章','系统设计成本教训','2026-05-14')">🌱 第15章：系统设计成本教训</li>
+            <li onclick="loadChapter('第16章','编程工具认知转变','2026-05-14')">🌱 第16章：编程工具认知转变</li>
+            <li onclick="loadChapter('第17章','AI变现','2026-05-14')">🌿 第17章：AI变现</li>
+            <li onclick="loadChapter('第18章','成长日志','2026-05-14')">🌱 第18章：成长日志</li>
+          </ul>
+        </li>
+        <li>
+          <div class="chapter" onclick="toggleTree(this)">
+            <span class="arrow">&#9654;</span> 实验模块 <span style="font-size:11px;color:var(--text-muted);margin-left:auto">🌿 探索中</span>
+          </div>
+          <ul class="sub">
+            <li style="color:var(--text-muted);cursor:default">🌿 第19章：读者实验区（待生长）</li>
+            <li style="color:var(--text-muted);cursor:default">🌿 第20章：知识图谱（待生长）</li>
           </ul>
         </li>
       </ul>
@@ -718,20 +751,21 @@
     <div class="about-card">
       <h2>&#128172; 互动区</h2>
       <p style="font-size:14px;color:var(--text-secondary);margin-bottom:16px">有任何想法、问题或建议，欢迎留言交流。</p>
-      <div class="comment-form">
-        <input type="text" class="comment-input" placeholder="你的昵称（选填）">
-        <textarea class="comment-textarea" placeholder="写下你的想法..."></textarea>
-        <button class="btn-send" onclick="sendComment()">发送留言</button>
-      </div>
-      <div class="comment-list" id="commentList">
-        <div class="comment-item">
-          <div class="comment-avatar">读</div>
-          <div class="comment-content">
-            <div class="comment-meta"><span class="comment-name">读者</span><span class="comment-time">2026-05-14</span></div>
-            <p class="comment-text">期待这本书！作为AI小白，很需要这样的入门指南。</p>
-          </div>
-        </div>
-      </div>
+      <script src="https://giscus.app/client.js"
+        data-repo="r2fdm6ncsm-prog/InkGrowth-Notes"
+        data-repo-id="R_kgDOSc5U8w"
+        data-category="Q&A"
+        data-category-id="DIC_kwDOSc5U884C9ANV"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="light"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+      </script>
     </div>
   </div>
 </div>
@@ -741,7 +775,13 @@
   <div class="logo">墨积<span>·</span>成长 <small>InkGrowth</small></div>
   <p>从笔记到智慧，陪你一起成长 &nbsp;·&nbsp; Notes today, growth tomorrow</p>
   <p style="margin-top:6px">&copy; 2026 墨积成长</p>
+  <p style="margin-top:12px">
+    <span id="busuanzi_container_site_pv">总访问 <span id="busuanzi_value_site_pv">-</span> 次</span>
+    &nbsp;|&nbsp;
+    <span id="busuanzi_container_site_uv">访客 <span id="busuanzi_value_site_uv">-</span> 人</span>
+  </p>
 </div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.min.js"></script>
 
 <!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
@@ -785,14 +825,14 @@
     el.nextElementSibling.classList.toggle('open');
   }
   function switchBook(bookId){
-    if(bookId === 'new-book'){alert('更多书籍正在筹备中，敬请期待！');return}
+    if(bookId === 'growing'){alert('这本书一直在生长，每次回来可能都有新内容 🪴');return}
     alert('切换到：' + bookId);
   }
                 function loadChapter(ch, title, date){
     window.scrollTo({top:0,behavior:'smooth'});
     document.querySelectorAll('.tree .chapter').forEach(c=>c.classList.remove('active'));
     document.querySelectorAll('.tree .sub li').forEach(l=>l.classList.remove('active'));
-    const labels = {'第01章':'基础模块','第02章':'基础模块','第03章':'基础模块','第04章':'基础模块','第05章':'基础模块','第06章':'基础模块','第07章':'基础模块','第08章':'成长模块','第09章':'成长模块','第10章':'成长模块','第11章':'成长模块','第12章':'成长模块','第13章':'成长模块','第14章':'成长模块','第15章':'成长模块','第16章':'成长模块','第18章':'成长模块'};
+    const labels = {'第01章':'基础模块','第02章':'基础模块','第03章':'基础模块','第04章':'基础模块','第05章':'基础模块','第06章':'基础模块','第07章':'基础模块','第08章':'成长模块','第09章':'成长模块','第10章':'成长模块','第11章':'成长模块','第12章':'成长模块','第13章':'成长模块','第14章':'成长模块','第15章':'成长模块','第16章':'成长模块','第17章':'成长模块','第18章':'成长模块','第19章':'实验模块','第20章':'实验模块'};
     let content = '';
     if(ch === '第01章'){
       content = `<blockquote>
@@ -1099,6 +1139,18 @@
 <p>写这一章的时候我反复在想：如果一年前的我看到这一章，我会怎么想？大概率是"说得有道理但我还是不知道从哪开始"。所以我刻意写得离地很近——不是讲大道理，就是告诉你"我是怎么开始的"。因为我知道，当你知道一个和你差不多的人走通了这条路，你自己也会想试试。</p>
 <hr>
 <h2>🌱 生长层·一个观察：AI不是在干掉所有编程岗位</h2>
+<hr>
+<h2>🌱 生长层·入门两步走</h2>
+<p>一路折腾下来，如果让我给刚起步的人一个最精简的起点，我会说——<strong>先把这两个玩熟。</strong></p>
+<h3>第一步：ima 笔记</h3>
+<p>ima 是一个笔记软件，但它解决的痛点很实在：你每天接触的信息太多了——文章、截图、聊天记录、灵感片段……散落在各个地方，想用的时候找不到。</p>
+<p>ima 的核心价值不是"写"，而是<strong>收</strong>。你把碎片扔进去，它帮你整理、连接、沉淀。对学习 AI 的人来说，这意味着你不需要一开始就建立"完美知识体系"——先记下来，让工具帮你把线索串起来。对工作人士来说，它解决的是跨设备信息同步的问题。</p>
+<h3>第二步：Qclaw</h3>
+<p>Qclaw（小龙虾）是腾讯出的 AI 编程工具。推荐它的原因很简单——它是<strong>门槛最低的"做出来"体验</strong>。不需要配环境、不需要学命令行，安装打开就能用。你描述需求，它帮你生成代码、跑出结果。</p>
+<p>这个体验很重要：很多人学 AI 卡住不是因为不想学，是因为试了好几个工具都没做出像样的东西，然后放弃了。Qclaw 把"第一次做出东西"的成本降到了最低。</p>
+<h3>为什么是这两个</h3>
+<p>一个管<strong>输入</strong>（ima 收信息），一个管<strong>输出</strong>（Qclaw 做东西）。先用 ima 养成记录和整理的习惯，再用 Qclaw 体验"用 AI 做出东西"的感觉。两条腿都站稳了，再往外探索。</p>
+<blockquote>不是工具越多学得越快，是先把一两个用透，建立了正反馈，后面的路自然就打开了。</blockquote>
 <hr>`;
     } else if(ch === '第04章'){
       content = `<blockquote>
